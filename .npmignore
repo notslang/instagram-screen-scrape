@@ -1,0 +1,6 @@
+test
+src
+.travis.yml
+.editorconfig
+Makefile
+docs
