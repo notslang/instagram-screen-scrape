@@ -20,3 +20,64 @@ By default, there is 1 line per post, making it easy to pipe into other tools. T
 $ instagram-screen-scrape -u slang800 | wc -l
 2
 ```
+
+### JavaScript Module
+The following example is in CoffeeScript.
+
+```coffee
+scrape = require 'instagram-screen-scrape'
+
+# create the stream
+streamOfPosts = scrape(username: 'slang800')
+
+# do something interesting with the stream
+streamOfPosts.on('readable', ->
+  # since it's an object-mode stream, we get objects from it and don't need to
+  # parse JSON or anything.
+  post = streamOfPosts.read()
+
+  # the time field is represented in UNIX time
+  time = new Date(post.time * 1000)
+
+  # output something like "slang800's post from 4/5/2015 got 1 like(s), and 0
+  # comment(s)"
+  console.log "slang800's post from #{time.toLocaleDateString()} got
+  #{post.like} like(s), and #{post.comment} comment(s)"
+)
+```
+
+The following example is the same as the last one, but in JavaScript.
+
+```js
+var scrape, streamOfPosts;
+scrape = require('instagram-screen-scrape');
+
+streamOfPosts = scrape({
+  username: 'slang800'
+});
+
+streamOfPosts.on('readable', function() {
+  var post, time;
+  post = streamOfPosts.read();
+  time = new Date(post.time * 1000);
+  console.log([
+    "slang800's post from ",
+    time.toLocaleDateString(),
+    " got ",
+    post.like,
+    " like(s), and ",
+    post.comment,
+    " comment(s)"
+  ].join(''));
+});
+```
+
+## Why?
+The fact that Instagram requires an app to be registered just to access the data that is publicly available on their site is excessively controlling. Scripts should be able to consume the same data as people, and with the same level of authentication. Sadly, Instagram doesn't provide an open, structured, and machine readable API.
+
+So, we're forced to use a method that Instagram cannot effectively shut down without harming themselves: scraping their user-facing site.
+
+## Caveats
+- This is probably against the Instagram TOS, so don't use it if that sort of thing worries you.
+- Whenever Instagram updates certain parts of their front-end this scraper will need to be updated to support the new markup.
+- You can't scrape protected accounts or get engagement rates / impression counts (cause it's not public duh).
