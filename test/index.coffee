@@ -17,7 +17,8 @@ describe 'post stream', ->
       post = @stream.read()
       post.should.be.an.instanceOf(Object)
       @posts.push post
-    ).on('end', ->
+    ).on('end', =>
+      @posts.length.should.be.above(0)
       done()
     )
 
