@@ -15,15 +15,19 @@ W = require 'when'
  * @return {Array} A stream of posts
 ###
 getPostPage = (username, startingId) ->
+  outStream = JSONStream.parse('items.*')
   request.get(
     uri: "https://instagram.com/#{username}/media/"
     qs:
       'max_id': startingId
-  ).on('error', (err) ->
-    console.error err # TODO: fix
-  ).pipe(
-    JSONStream.parse('items.*')
+  ).on('response', (resp) ->
+    if resp.statusCode is 200
+      resp.pipe(outStream)
+    else
+      throw new Error("Instagram returned status code: #{resp.statusCode} for
+      user '#{username}' and startingId: '#{startingId}'")
   )
+  return outStream
 
 ###*
  * Scrape as many posts as possible for a given user.
