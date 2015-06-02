@@ -1,7 +1,7 @@
 {
   "name": "instagram-screen-scrape",
   "description": "scrape public instagram data w/out API access",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Sean Lang <slang800@gmail.com>",
   "bin": {
     "instagram-screen-scrape": "./bin/index.js"
