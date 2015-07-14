@@ -1,4 +1,4 @@
-scrape = require './'
+InstagramPosts = require './'
 packageInfo = require '../package'
 ArgumentParser = require('argparse').ArgumentParser
 JSONStream = require 'JSONStream'
@@ -16,4 +16,10 @@ argparser.addArgument(
 )
 
 argv = argparser.parseArgs()
-scrape(argv).pipe(JSONStream.stringify('[', ',\n', ']\n')).pipe(process.stdout)
+(
+  new InstagramPosts(argv)
+).pipe(
+  JSONStream.stringify('[', ',\n', ']\n')
+).pipe(
+  process.stdout
+)

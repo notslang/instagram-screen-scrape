@@ -1,11 +1,11 @@
 should = require 'should'
 isStream = require 'isstream'
 
-scrape = require '../lib'
+InstagramPosts = require '../lib'
 
 describe 'post stream', ->
   before ->
-    @stream = scrape(username: 'slang800')
+    @stream = new InstagramPosts(username: 'slang800')
     @posts = []
 
   it 'should return a stream', ->
@@ -13,8 +13,7 @@ describe 'post stream', ->
 
   it 'should stream post objects', (done) ->
     @timeout(4000)
-    @stream.on('readable', =>
-      post = @stream.read()
+    @stream.on('data', (post) =>
       post.should.be.an.instanceOf(Object)
       @posts.push post
     ).on('end', =>
@@ -30,4 +29,4 @@ describe 'post stream', ->
     for post in @posts
       post.time.should.be.an.instanceOf(Number)
       (post.time > year2000).should.be.true
-      (post.time < year3000).should.be.true # twitter should be dead by then
+      (post.time < year3000).should.be.true # instagram should be dead by then

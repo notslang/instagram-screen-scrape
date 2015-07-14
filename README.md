@@ -25,10 +25,10 @@ $ instagram-screen-scrape -u slang800 | wc -l
 The following example is in CoffeeScript.
 
 ```coffee
-scrape = require 'instagram-screen-scrape'
+InstagramPosts = require 'instagram-screen-scrape'
 
 # create the stream
-streamOfPosts = scrape(username: 'slang800')
+streamOfPosts = new InstagramPosts(username: 'slang800')
 
 # do something interesting with the stream
 streamOfPosts.on('readable', ->
@@ -49,10 +49,10 @@ streamOfPosts.on('readable', ->
 The following example is the same as the last one, but in JavaScript.
 
 ```js
-var scrape, streamOfPosts;
-scrape = require('instagram-screen-scrape');
+var InstagramPosts, streamOfPosts;
+InstagramPosts = require('instagram-screen-scrape');
 
-streamOfPosts = scrape({
+streamOfPosts = new InstagramPosts({
   username: 'slang800'
 });
 

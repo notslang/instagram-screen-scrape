@@ -12,10 +12,8 @@
   "dependencies": {
     "JSONStream": "^0.10.0",
     "argparse": "^1.0.2",
-    "highland": "^2.4.0",
     "readable-stream": "^1.0.33",
-    "request": "^2.55.0",
-    "when": "^3.7.2"
+    "request": "^2.55.0"
   },
   "devDependencies": {
     "coffee-script": "^1.9.1",

@@ -3,8 +3,6 @@
 Readable = require('readable-stream').Readable
 request = require 'request'
 JSONStream = require 'JSONStream'
-H = require 'highland'
-W = require 'when'
 
 ###*
  * Make a request for a Instagram page, parse the response, and get all the
@@ -12,9 +10,9 @@ W = require 'when'
  * @param {String} username
  * @param {String} [startingId] The maximum post id query for (the lowest one
    from the last request), or undefined if this is the first request.
- * @return {Array} A stream of posts
+ * @return {Stream} A stream of posts
 ###
-getPostPage = (username, startingId) ->
+getPosts = (username, startingId) ->
   outStream = JSONStream.parse('items.*')
   request.get(
     uri: "https://instagram.com/#{username}/media/"
@@ -30,52 +28,78 @@ getPostPage = (username, startingId) ->
   return outStream
 
 ###*
- * Scrape as many posts as possible for a given user.
+ * Stream that scrapes as many posts as possible for a given user.
  * @param {String} options.username
  * @return {Stream} A stream of post objects.
 ###
-module.exports = ({username}) ->
-  output = new Readable(objectMode: true)
-  output._read = (->) # prevent "Error: not implemented" with a noop
+class InstagramPosts extends Readable
+  _lock: false
+  _minPostId: undefined
 
-  scrape = (username, startingId) ->
-    W.promise((resolve, reject) ->
-      minId = null
+  constructor: ({@username}) ->
+    # remove the explicit HWM setting when github.com/nodejs/node/commit/e1fec22
+    # is merged into readable-stream
+    super(highWaterMark: 16, objectMode: true)
+    @_readableState.destroyed = false
 
-      H(
-        getPostPage(username, startingId)
-      ).map((rawPost) ->
-        post =
-          id: rawPost.code
-          username: username
-          time: +rawPost['created_time']
-          type: rawPost.type
-          like: rawPost.likes.count
-          comment: rawPost.comments.count
+  _read: =>
+    # prevent additional requests from being made while one is already running
+    if @_lock then return
+    @_lock = true
 
-        if rawPost.caption?
-          post.text = rawPost.caption.text
+    if @_readableState.destroyed
+      @push(null)
+      return
 
-        if rawPost.images?
-          post.image = rawPost.images['standard_resolution'].url
+    hasMorePosts = false
 
-        if rawPost.videos?
-          post.video = rawPost.videos['standard_resolution'].url
+    # we hold one post in a buffer because we need something to send directly
+    # after we turn off the lock
+    lastPost = undefined
 
-        minId = rawPost.id # last id so far
-        output.push(post)
-      ).on('error', (err) ->
-        reject(err)
-      ).on('end', ->
-        resolve(minId)
-      ).toArray( ->) # hack to make the stream flow
-    ).then((minId) ->
-      if minId?
-        return scrape(username, minId)
-      else
-        output.push(null)
-        return
+    getPosts(@username, @_minPostId).on('error', (err) =>
+      @emit('error', err)
+    ).on('data', (rawPost) =>
+      # if the request returned some posts, then we assume there are more
+      hasMorePosts = true
+
+      post =
+        id: rawPost.code
+        username: @username
+        time: +rawPost['created_time']
+        type: rawPost.type
+        like: rawPost.likes.count
+        comment: rawPost.comments.count
+
+      if rawPost.caption?
+        post.text = rawPost.caption.text
+
+      if rawPost.images?
+        post.image = rawPost.images['standard_resolution'].url
+
+      if rawPost.videos?
+        post.video = rawPost.videos['standard_resolution'].url
+
+      @_minPostId = rawPost.id # only the last one really matters
+
+      if lastPost? then @push(lastPost)
+      lastPost = post
+    ).on('end', =>
+      if hasMorePosts then @_lock = false
+      if lastPost? then @push(lastPost)
+      if not hasMorePosts then @push(null)
     )
 
-  scrape(username)
-  return output
+  destroy: =>
+    if @_readableState.destroyed then return
+    @_readableState.destroyed = true
+
+    @_destroy((err) =>
+      if (err) then @emit('error', err)
+      @emit('close')
+    )
+
+  _destroy: (cb) ->
+    process.nextTick(cb)
+
+module.exports = InstagramPosts
