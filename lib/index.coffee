@@ -1,8 +1,7 @@
 # see http://r.va.gg/2014/06/why-i-dont-use-nodes-core-stream-module.html for
 # why we use readable-stream
 Readable = require('readable-stream').Readable
-request = require 'request'
-JSONStream = require 'JSONStream'
+{jsonRequest} = require './util'
 
 ###*
  * Make a request for a Instagram page, parse the response, and get all the
@@ -13,19 +12,11 @@ JSONStream = require 'JSONStream'
  * @return {Stream} A stream of posts
 ###
 getPosts = (username, startingId) ->
-  outStream = JSONStream.parse('items.*')
-  request.get(
+  jsonRequest('items.*'
     uri: "https://instagram.com/#{username}/media/"
     qs:
       'max_id': startingId
-  ).on('response', (resp) ->
-    if resp.statusCode is 200
-      resp.pipe(outStream)
-    else
-      throw new Error("Instagram returned status code: #{resp.statusCode} for
-      user '#{username}' and startingId: '#{startingId}'")
   )
-  return outStream
 
 ###*
  * Stream that scrapes as many posts as possible for a given user.
