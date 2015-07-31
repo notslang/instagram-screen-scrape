@@ -1,7 +1,9 @@
-should = require 'should'
+{validate} = require 'json-schema'
 isStream = require 'isstream'
+should = require 'should'
 
 InstagramPosts = require '../lib'
+postSchema = require '../lib/post.schema'
 
 describe 'post stream', ->
   before ->
@@ -14,7 +16,7 @@ describe 'post stream', ->
   it 'should stream post objects', (done) ->
     @timeout(4000)
     @stream.on('data', (post) =>
-      post.should.be.an.instanceOf(Object)
+      validate(post, postSchema).errors.should.eql([])
       @posts.push post
     ).on('end', =>
       @posts.length.should.be.above(0)
@@ -27,6 +29,5 @@ describe 'post stream', ->
     year3000 = 32503698000
 
     for post in @posts
-      post.time.should.be.an.instanceOf(Number)
       (post.time > year2000).should.be.true
       (post.time < year3000).should.be.true # instagram should be dead by then
