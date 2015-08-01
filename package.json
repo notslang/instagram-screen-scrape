@@ -12,8 +12,10 @@
   "dependencies": {
     "JSONStream": "^0.10.0",
     "argparse": "^1.0.2",
+    "instagram-id-to-url-segment": "0.0.0",
     "readable-stream": "^1.0.33",
-    "request": "^2.55.0"
+    "request": "^2.55.0",
+    "tough-cookie": "^2.0.0"
   },
   "devDependencies": {
     "coffee-script": "^1.9.1",

@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "time": {
+      "description": "UNIX time at which the comment was made",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "username": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "text",
+    "time",
+    "username"
+  ]
+}
