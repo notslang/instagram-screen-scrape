@@ -2,7 +2,7 @@
 isStream = require 'isstream'
 should = require 'should'
 
-InstagramPosts = require '../lib'
+{InstagramPosts} = require '../lib'
 postSchema = require '../lib/post.schema'
 
 describe 'post stream', ->

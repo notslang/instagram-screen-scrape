@@ -25,16 +25,15 @@ $ instagram-screen-scrape posts -u slang800 | wc -l
 The following example is in CoffeeScript.
 
 ```coffee
-InstagramPosts = require 'instagram-screen-scrape'
+{InstagramPosts} = require 'instagram-screen-scrape'
 
 # create the stream
 streamOfPosts = new InstagramPosts(username: 'slang800')
 
 # do something interesting with the stream
-streamOfPosts.on('readable', ->
+streamOfPosts.on('data', (post) ->
   # since it's an object-mode stream, we get objects from it and don't need to
-  # parse JSON or anything.
-  post = streamOfPosts.read()
+  # parse JSON or anything
 
   # the time field is represented in UNIX time
   time = new Date(post.time * 1000)
@@ -50,16 +49,14 @@ The following example is the same as the last one, but in JavaScript.
 
 ```js
 var InstagramPosts, streamOfPosts;
-InstagramPosts = require('instagram-screen-scrape');
+InstagramPosts = require('instagram-screen-scrape').InstagramPosts;
 
 streamOfPosts = new InstagramPosts({
   username: 'slang800'
 });
 
-streamOfPosts.on('readable', function() {
-  var post, time;
-  post = streamOfPosts.read();
-  time = new Date(post.time * 1000);
+streamOfPosts.on('data', function(post) {
+  var time = new Date(post.time * 1000);
   console.log([
     "slang800's post from ",
     time.toLocaleDateString(),
