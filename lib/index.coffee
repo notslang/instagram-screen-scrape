@@ -59,17 +59,20 @@ class InstagramPosts extends Readable
         username: @username
         time: +rawPost['created_time']
         type: rawPost.type
-        like: rawPost.likes.count
-        comment: rawPost.comments.count
+        likes: rawPost.likes.count
+        comments: rawPost.comments.count
 
       if rawPost.caption?
         post.text = rawPost.caption.text
 
-      if rawPost.images?
-        post.image = rawPost.images['standard_resolution'].url
-
-      if rawPost.videos?
-        post.video = rawPost.videos['standard_resolution'].url
+      switch post.type
+        when 'image'
+          post.media = rawPost.images['standard_resolution'].url
+        when 'video'
+          post.media = rawPost.videos['standard_resolution'].url
+        else
+          throw new Error("Instagram did not return a URL for the media on post
+          #{post.id}")
 
       @_minPostId = rawPost.id # only the last one really matters
 

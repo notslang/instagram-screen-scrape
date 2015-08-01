@@ -9,8 +9,9 @@
       "type": "string"
     },
     "time": {
-      "type": "integer",
-      "description": "UNIX time at which the post was made"
+      "description": "UNIX time at which the post was made",
+      "minimum": 0,
+      "type": "integer"
     },
     "type": {
       "type": "string",
@@ -19,22 +20,18 @@
         "video"
       ]
     },
-    "like": {
+    "likes": {
       "type": "integer",
       "minimum": 0
     },
-    "comment": {
+    "comments": {
       "type": "integer",
       "minimum": 0
     },
     "text": {
       "type": "string"
     },
-    "image": {
-      "type": "string",
-      "format": "uri"
-    },
-    "video": {
+    "media": {
       "type": "string",
       "format": "uri"
     }
@@ -47,6 +44,7 @@
     "type",
     "like",
     "comment",
-    "text"
+    "text",
+    "media"
   ]
 }
