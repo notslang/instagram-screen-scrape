@@ -1,6 +1,6 @@
 {jsonRequest} = require './util'
 {urlSegmentToInstagramId} = require 'instagram-id-to-url-segment'
-Readable = require('readable-stream').Readable
+Readable = require 'readable-stream/readable'
 request = require 'request'
 
 ###*
