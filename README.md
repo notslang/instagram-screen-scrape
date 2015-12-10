@@ -59,7 +59,7 @@ The following example is the same as the last one, but in JavaScript.
 
 ```js
 var InstagramPosts, streamOfPosts;
-InstagramPosts = require('instagram-screen-scrape').InstagramPosts;
+InstagramPosts = require('instagram-screen-scrape');
 
 streamOfPosts = new InstagramPosts({
   username: 'slang800'
@@ -71,9 +71,9 @@ streamOfPosts.on('data', function(post) {
     "slang800's post from ",
     time.toLocaleDateString(),
     " got ",
-    post.likes,
+    post.like,
     " like(s), and ",
-    post.comments,
+    post.comment,
     " comment(s)"
   ].join(''));
 });
