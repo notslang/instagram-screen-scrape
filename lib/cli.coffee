@@ -1,4 +1,4 @@
-InstagramPosts = require './'
+InstagramPosts = require './posts'
 InstagramComments = require './comments'
 packageInfo = require '../package'
 ArgumentParser = require('argparse').ArgumentParser
