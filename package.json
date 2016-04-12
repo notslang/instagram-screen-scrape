@@ -12,7 +12,6 @@
   "dependencies": {
     "JSONStream": "^0.10.0",
     "argparse": "^1.0.7",
-    "instagram-id-to-url-segment": "0.0.0",
     "readable-stream": "^2.0.4",
     "request": "^2.65.0",
     "tough-cookie": "^2.2.1"

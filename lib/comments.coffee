@@ -1,5 +1,4 @@
 {jsonRequest} = require './util'
-{urlSegmentToInstagramId} = require 'instagram-id-to-url-segment'
 Readable = require 'readable-stream/readable'
 request = require 'request'
 
@@ -16,7 +15,6 @@ class InstagramComments extends Readable
 
   constructor: ({@post}) ->
     @cookieJar = request.jar()
-    @postId = urlSegmentToInstagramId(@post)
     # remove the explicit HWM setting when github.com/nodejs/node/commit/e1fec22
     # is merged into readable-stream
     super(highWaterMark: 16, objectMode: true)
@@ -41,7 +39,7 @@ class InstagramComments extends Readable
         @emit('error', 'Didn\'t get a csrftoken from the first request')
         return
 
-      for cookie in @cookieJar.getCookies 'https://instagram.com'
+      for cookie in @cookieJar.getCookies 'https://www.instagram.com'
         if cookie.key is 'csrftoken'
           @_csrfToken = cookie.value
           break
@@ -51,7 +49,7 @@ class InstagramComments extends Readable
       # also nice that this is exactly how instagram does it on their website,
       # so it should look like normal traffic
       jsonRequest('media.comments.nodes.*'
-        uri: "https://instagram.com/p/#{@post}/?__a=1"
+        uri: "https://www.instagram.com/p/#{@post}/?__a=1"
         jar: @cookieJar
       )
     else if minId?
@@ -60,7 +58,7 @@ class InstagramComments extends Readable
       # so we end up with a huge and long request if we do it that way. also,
       # nothing on the Instagram website actually uses that, so it might go away
       query = """
-        ig_media(#{@postId}) {
+        ig_shortcode(#{@post}) {
           comments.before(#{minId}, 20) {
             nodes {
               id,
@@ -79,14 +77,14 @@ class InstagramComments extends Readable
 
       jsonRequest('.nodes.*'
         method: 'POST'
-        url: 'https://instagram.com/query/'
+        url: 'https://www.instagram.com/query/'
         jar: @cookieJar # the CSRF token needs to be passed as a cookie too
         form:
           q: query
           ref: 'media::show'
         headers:
           'X-CSRFToken': @_csrfToken
-          'Referer': 'https://instagram.com/'
+          'Referer': 'https://www.instagram.com/'
       )
     else
       @emit('error', 'Had csrfToken but no minId for post query.')
