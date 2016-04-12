@@ -9,9 +9,10 @@ request = require 'request'
  * @return {Stream} A stream of comment objects.
 ###
 class InstagramComments extends Readable
+  _csrfToken: undefined
   _lock: false
   _minId: undefined
-  _csrfToken: undefined
+  _requests: 0
 
   constructor: ({@post}) ->
     @cookieJar = request.jar()
@@ -31,9 +32,15 @@ class InstagramComments extends Readable
    * @private
   ###
   _getCommentsPage: (minId) =>
+    @_requests += 1
+
     # this is actually only needed on the 2nd request, once we have a cookie for
     # the csrf token, but don't have it stored in `@_csrfToken` yet
     if not @_csrfToken?
+      if @_requests > 2
+        @emit('error', 'Didn\'t get a csrftoken from the first request')
+        return
+
       for cookie in @cookieJar.getCookies 'https://instagram.com'
         if cookie.key is 'csrftoken'
           @_csrfToken = cookie.value
