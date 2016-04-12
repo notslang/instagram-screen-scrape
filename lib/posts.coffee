@@ -55,7 +55,7 @@ class InstagramPosts extends Readable
       hasMorePosts = true
 
       post =
-        id: rawPost.code
+        id: rawPost.id
         username: @username
         time: +rawPost['created_time']
         type: rawPost.type
