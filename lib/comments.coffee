@@ -82,7 +82,7 @@ class InstagramComments extends Readable
           'Referer': 'https://instagram.com/'
       )
     else
-      throw new Error('Had csrfToken but no minId for post query.')
+      @emit('error', 'Had csrfToken but no minId for post query.')
 
   _read: =>
     # prevent additional requests from being made while one is already running

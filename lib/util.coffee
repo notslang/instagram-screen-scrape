@@ -16,7 +16,10 @@ jsonRequest = (jsonSelector, options) ->
       else
         response.pipe(outStream)
     else
-      throw new Error("Instagram returned status code: #{response.statusCode}")
+      outStream.emit(
+        'error'
+        "Instagram returned status code: #{response.statusCode}"
+      )
   )
   return outStream
 
