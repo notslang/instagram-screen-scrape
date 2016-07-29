@@ -42,7 +42,7 @@ class InstagramAccounts extends Readable
       @push(null)
       return
 
-    # hasMoreUsers = false
+    hasMoreUsers = false
     foundAccounts = 0
 
     # we hold one post in a buffer because we need something to send directly
@@ -53,15 +53,15 @@ class InstagramAccounts extends Readable
       @emit('error', err)
     ).on('data', (raw) =>
       # if the request returned some profiles, be happy and stop searching
-      hasMoreUsers = true
+      hasMoreUsers = false
 
       if foundAccounts >= @limit
         hasMoreUsers = false
         # console.log 'foundAccounts', foundAccounts, @limit
-        @destroy()
+        # @destroy()
 
       account =
-        user_id: raw.user.pk
+        id: raw.user.pk
         username: raw.user.username
         profile_picture: raw.user.profile_pic_url
         full_name: raw.user.full_name
@@ -76,9 +76,9 @@ class InstagramAccounts extends Readable
       if lastAccount? then @push(lastAccount)
       lastAccount = account
     ).on('end', =>
-      if foundAccounts < @limit then @_lock = false
+      if hasMoreUsers then @_lock = false
       if lastAccount? then @push(lastAccount)
-      if not foundAccounts >= @limit then @push(null)
+      if not hasMoreUsers then @push(null)
     )
 
   destroy: =>

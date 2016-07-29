@@ -2,9 +2,10 @@
 isStream = require 'isstream'
 should = require 'should'
 
-{InstagramPosts, InstagramComments} = require '../lib'
+{InstagramPosts, InstagramComments, InstagramAccounts} = require '../lib'
 postSchema = require '../lib/post.schema'
 commentSchema = require '../lib/comment.schema'
+accountSchema = require '../lib/account.schema'
 
 describe 'post stream', ->
   before ->
@@ -32,6 +33,36 @@ describe 'post stream', ->
     for post in @posts
       (post.time > year2000).should.be.true
       (post.time < year3000).should.be.true # instagram should be dead by then
+
+describe 'account stream', ->
+  before ->
+    @stream = new InstagramAccounts(query: 'slang800')
+    @accounts = []
+
+  it 'should return a stream', ->
+    isStream(@stream).should.be.true
+
+  it 'should stream account objects', (done) ->
+    @timeout(4000)
+    @stream.on('data', (account) =>
+      validate(account, accountSchema).errors.should.eql([])
+      @accounts.push account
+    ).on('end', =>
+      @accounts.length.should.be.above(0)
+      done()
+    )
+
+  it 'should include a valid username for each account', ->
+
+    for acc in @accounts
+      acc.username.should.be.an.instanceOf(String)
+      acc.username.length.should.be.above(0)
+
+  it 'should include a valid id for each account', ->
+
+    for acc in @accounts
+      acc.id.should.be.an.instanceOf(Number)
+      acc.id.should.be.above(0)
 
 describe 'comment stream', ->
   before ->
