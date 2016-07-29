@@ -1,5 +1,6 @@
 InstagramPosts = require './posts'
 InstagramComments = require './comments'
+InstagramAccounts = require './accounts'
 packageInfo = require '../package'
 ArgumentParser = require('argparse').ArgumentParser
 JSONStream = require 'JSONStream'
@@ -36,6 +37,23 @@ subcommand.addArgument(
   help: 'Username of the account to scrape.'
 )
 
+subcommand = subparser.addParser(
+  'accounts'
+  description: 'Scrape accounts by query'
+  addHelp: true
+)
+subcommand.addArgument(
+  ['-q', '--query']
+  type: 'string'
+  help: 'Query string of the accounts to scrape.'
+)
+subcommand.addArgument(
+  ['-l', '--limit']
+  type: 'int'
+  defaultValue: 1
+  help: 'Limit number of pages to scrape'
+)
+
 argv = argparser.parseArgs()
 {subcommand} = argv
 delete argv.subcommand
@@ -43,6 +61,8 @@ delete argv.subcommand
 (
   if subcommand is 'posts'
     new InstagramPosts(argv)
+  else if subcommand is 'accounts'
+    new InstagramAccounts(argv)
   else # comments
     new InstagramComments(argv)
 ).pipe(
