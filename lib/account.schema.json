@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "username": {
+      "type": "string"
+    },
+    "profile_picture": {
+      "type": "string"
+    },
+    "full_name": {
+      "type": "string"
+    },
+    "follower_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "is_private": {
+      "type": "boolean"
+    },
+    "is_verified": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "username"
+  ]
+}

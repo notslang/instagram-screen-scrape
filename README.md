@@ -24,6 +24,15 @@ $ instagram-screen-scrape comments --post 0qPcnuI4Pr
 {"id":"948824521079751272","username":"k.kate","time":1427328718,"text":"Macarons or a Petri dish full of cells? ¯\\_(ツ)_/¯"}]
 ```
 
+Let's not forget about scraping accounts:
+
+```bash
+$ instagram-screen-scrape accounts --query carrotcreative
+[{"id":3007271,"username":"carrotcreative","profile_picture":"https://scontent-yyz1-1.cdninstagram.com/t51.2885-19/928950_798424113611469_2009622893_a.jpg","full_name":"carrotcreative","follower_count":15183,"is_private":false,"is_verified":false},
+{"id":3249857133,"username":"carrotcreativestudio","profile_picture":"https://scontent-yyz1-1.cdninstagram.com/t51.2885-19/s150x150/13355608_515624698629721_1281958434_a.jpg","full_name":"Carrot Creative Studios","follower_count":27,"is_private":false,"is_verified":false},
+{"id":373795157,"username":"carrotcreativedev","profile_picture":"https://scontent-yyz1-1.cdninstagram.com/t51.2885-19/11906329_960233084022564_1448528159_a.jpg","full_name":"carrot devops","follower_count":3,"is_private":false,"is_verified":false}]
+```
+
 By default, there is 1 line per post, making it easy to pipe into other tools. The following example uses `wc -l` to count how many posts are returned. As you can see, I don't post much.
 
 ```bash
