@@ -28,6 +28,9 @@
       "type": "integer",
       "minimum": 0
     },
+    "videoViews": {
+      "type": "integer"
+    },
     "text": {
       "type": "string"
     },
