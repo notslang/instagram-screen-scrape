@@ -65,6 +65,9 @@ class InstagramPosts extends Readable
       if rawPost.caption?
         post.text = rawPost.caption.text
 
+      if rawPost.type == 'video' && rawPost.video_views?
+        post.videoViews = rawPost.video_views
+
       switch post.type
         when 'image'
           post.media = rawPost.images['standard_resolution'].url
