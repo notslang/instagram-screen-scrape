@@ -71,7 +71,7 @@ class InstagramPosts extends Readable
         when 'video'
           post.media = rawPost.videos['standard_resolution'].url
         when 'carousel'
-          post.media = rawPost.carousel_media.map((media) -> media.images['standard_resolution'].url)
+          post.media = rawPost.carousel_media.map((media) -> media[if media.images then 'images' else 'videos']['standard_resolution'].url)
         else
           throw new Error("Instagram did not return a URL for the media on post
           #{post.id}")
