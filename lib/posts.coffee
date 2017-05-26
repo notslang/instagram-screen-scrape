@@ -71,8 +71,10 @@ class InstagramPosts extends Readable
         when 'video'
           post.media = rawPost.videos['standard_resolution'].url
         else
-          throw new Error("Instagram did not return a URL for the media on post
-          #{post.id}")
+          # throw new Error("Instagram did not return a URL for the media on post
+          # #{post.id}")
+          console.error ("Instagram did not return a URL for the media on post
+          # #{post.id}")
 
       @_minPostId = rawPost.id # only the last one really matters
 
